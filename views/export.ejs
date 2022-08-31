@@ -1,0 +1,124 @@
+<%- include('./partials/header') %>
+
+    <div class="container">
+        <h1 class="mt-3">Export</h1>
+
+        <div class="card my-2">
+            <div class="card-header">
+                Export
+            </div>
+            <div class="card-body">
+                <%if(message){%>
+                    <%if(message.status == "success"){%>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Success!</strong> <%=message.message%>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <%}else if(message.status == "error"){%>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Error!</strong> <%=message.message%>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <%}%>
+                <%}%>
+                <form method="POST">
+                    <input id="csrf" name="_csrf" type="text" value="<%=csrfToken%>" hidden>
+                    <div class="mb-3 row align-items-center">
+                        <div class="col-3">
+                            <label for="emailInput" class="form-label">Email Address</label>
+                        </div>
+                        <div class="col-9">
+                            <input type="email" name="email" class="form-control" id="emailInput" value=""
+                                required>
+                        </div>
+                    </div>
+
+                    <!-- <div class="mb-3 row align-items-center">
+                        <div class="col-3">
+                            <label for="dateInput" class="form-label">Period</label>
+                        </div>
+                        <div class="col-4">
+                            <input type="date" name="date_start" class="form-control" id="dateInput"
+                                value="<%=moment((new Date).setDate(1)).format('YYYY-MM-DD') %>" required>
+                        </div>
+                        <div class="col-1">
+                            -
+                        </div>
+                        <div class="col-4">
+                            <input type="date" name="date_end" class="form-control" id="dateInput"
+                                value="<%=moment(new Date).format('YYYY-MM-DD') %>" required>
+                        </div>
+                    </div> -->
+                    <a href="/" class="btn btn-secondary">Back</a>
+                    <button type="submit" class="btn btn-success">Send</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        window.onload = function () {
+            
+
+            const useNodeJS = true; // if you are not using a node server, set this value to false
+            const defaultLiffId = ""; // change the default LIFF value if you are not using a node server
+
+            // DO NOT CHANGE THIS
+            let myLiffId = "";
+
+            // if node is used, fetch the environment variable and pass it to the LIFF method
+            // otherwise, pass defaultLiffId
+            if (useNodeJS) {
+                fetch("/send-id")
+                    .then(function (reqResponse) {
+                        return reqResponse.json();
+                    })
+                    .then(function (jsonResponse) {
+                        myLiffId = jsonResponse.id;
+                        console.log(myLiffId);
+                        initializeLiffOrDie(myLiffId);
+                    })
+                    .catch(function (error) { });
+            } else {
+                myLiffId = defaultLiffId;
+                initializeLiffOrDie(myLiffId);
+            }
+        };
+
+        function initializeLiffOrDie(myLiffId) {
+            if (!myLiffId) {
+            } else {
+                initializeLiff(myLiffId);
+            }
+        }
+
+        function initializeApp(myLiffId) {
+            liff.ready.then(() => {
+                if (!liff.isInClient()) {
+                    sendAlertIfNotInClient();
+                    return;
+                }
+
+            });
+        }
+
+        function initializeLiff(myLiffId) {
+            liff
+                .init({
+                    liffId: myLiffId,
+                })
+                .then(() => {
+                    initializeApp();
+                })
+                .catch((err) => {
+                    console.error("error", err);
+                });
+        }
+
+        function sendAlertIfNotInClient() {
+            alert("Please enter this page from line messenger app.");
+        }
+    </script>
+
+    <%- include('./partials/footer') %>

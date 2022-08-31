@@ -1,0 +1,45 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="/">
+			<img src="/static/icon/money_manager_trans_v1.png" alt="Money Manager" width="29" height="29" class="d-inline-block align-text-top">
+			<b>Money Manager</b>
+		</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<% if(authenticated){ %>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="/">Summary</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/export">Export</a>
+					</li>
+				</ul>
+				<div class="d-flex">
+					<ul class="navbar-nav">
+						<li class="nav-item dropdown">
+							<a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+								aria-expanded="false">
+								<span>
+									<img src="<%=user.photo%>" class="rounded float-start" width="7%" alt="<%=user.name%>">
+									&nbsp;
+									<%=user.name%>
+								</span>
+								
+							</a>
+							<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+								<form action="/logout" method="POST">
+									<input  name="_csrf" type="text" value="<%=csrfToken%>" hidden>
+									<li><button class="dropdown-item text-danger" type="submit">Logout</button></li>
+								</form>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		<% } %>
+	</div>
+</nav>

@@ -1,0 +1,126 @@
+<%- include('./partials/header') %>
+
+	<div class="container">
+		<div class="card text-center">
+			<!-- <div class="card-header">Log In</div> -->
+			<div class="card-body">
+				<img id="profile-picture" src="" class="rounded border w-50" />
+				<div class="my-3">
+					<h5 id="profile-name" class="card-title placeholder-glow">
+						<span class="placeholder col-1"></span>
+						<span class="placeholder col-3"></span>
+					</h5>
+					<p id="profile-status" class="card-text placeholder-glow">
+						<span class="placeholder col-4"></span>
+						<span class="placeholder col-5"></span>
+						<span class="placeholder col-2"></span>
+					</p>
+					<p class="placeholder-glow">
+					</p>
+				</div>
+				<form method="POST">
+					<input name="_csrf" type="text" value="<%=csrfToken%>" hidden>
+
+					<input id="line-id" name="lineid" type="text" value="" hidden>
+					<input id="line-name" name="name" type="text" value="" hidden>
+					<input id="photo-url" name="photo" type="text" value="" hidden>
+
+					<button id="login-btn" type="submit" class="btn btn-primary" disabled>Log in</button>
+				</form>
+				<div class="mt-3">
+					<small>OS: <span id="os"></span></small>
+					<small>LINE Version: <span id="line-version"></span></small>
+				</div>
+			</div>
+		</div>
+		<p id="profile"></p>
+	</div>
+
+	<script>
+		window.onload = function () {
+			const useNodeJS = true; // if you are not using a node server, set this value to false
+			const defaultLiffId = ""; // change the default LIFF value if you are not using a node server
+
+			// DO NOT CHANGE THIS
+			let myLiffId = "";
+
+			// if node is used, fetch the environment variable and pass it to the LIFF method
+			// otherwise, pass defaultLiffId
+			if (useNodeJS) {
+				fetch("/send-id")
+					.then(function (reqResponse) {
+						return reqResponse.json();
+					})
+					.then(function (jsonResponse) {
+						myLiffId = jsonResponse.id;
+						// console.log(myLiffId);
+						initializeLiffOrDie(myLiffId);
+					})
+					.catch(function (error) { });
+			} else {
+				myLiffId = defaultLiffId;
+				initializeLiffOrDie(myLiffId);
+			}
+		};
+
+		function initializeLiffOrDie(myLiffId) {
+			if (!myLiffId) {
+
+			} else {
+				initializeLiff(myLiffId);
+			}
+		}
+
+		function initializeApp(myLiffId) {
+
+			liff.ready.then(() => {
+				console.log("ready");
+
+				//   if (!liff.isInClient()) {
+				//     sendAlertIfNotInClient();
+				//     return;
+				//   }
+				$("#os").text(liff.getOS());
+				$("#line-version").text(liff.getLineVersion());
+				$("#login-btn").prop('disabled', false);
+				liff
+					.getProfile()
+					.then((profile) => {
+						$("#profile-name").text(profile.displayName);
+						$("#profile-status").text(profile.statusMessage);
+						$("#profile-picture").attr("src", profile.pictureUrl);
+						$("#profile-picture").attr("alt", profile.displayName);
+
+						$("#line-id").val(profile.userId);
+						$("#line-name").val(profile.displayName);
+						$("#photo-url").val(profile.pictureUrl);
+						$("#login-btn").click();
+					})
+					.catch((err) => {
+						console.error("error", err);
+					});
+			});
+		}
+
+		function initializeLiff(myLiffId) {
+			liff
+				.init({
+					liffId: myLiffId,
+				})
+				.then(() => {
+					if (!liff.isLoggedIn()) {
+						alert("Please log in from LINE internal browser.");
+					}else{
+						initializeApp();
+					}
+				})
+				.catch((err) => {
+					console.error("error", err);
+				});
+		}
+
+		function sendAlertIfNotInClient() {
+			alert("Please enter this page from line messenger app.");
+		}
+	</script>
+	<%- include('./partials/footer') %>

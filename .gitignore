@@ -1,0 +1,5 @@
+#exclude
+node_modules
+.env
+exports
+package-lock.json
