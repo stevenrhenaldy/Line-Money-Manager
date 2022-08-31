@@ -1,3 +1,6 @@
 # Money Manager
-
-<h3>Money manager for LINE OA API</h3>
+<br>
+<br>
+<h3>Money manager for LINE OA with Web Interface</h3>
+<br>
+<p><b>Demo: @206rdgif</b></p>
