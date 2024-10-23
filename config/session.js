@@ -10,7 +10,8 @@ const conf = {
 	name: process.env.APP_NAME,
 	secret: process.env.SESSION_SECRET,
 	cookie: {
-		maxAge: 86400000
+		maxAge: 86400000,
+		secure: true
 	},
 	resave: true,
 	saveUninitialized: true
